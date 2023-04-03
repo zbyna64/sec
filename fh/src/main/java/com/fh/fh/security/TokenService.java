@@ -1,13 +1,11 @@
 package com.fh.fh.security;
 
-import com.nimbusds.jwt.JWTClaimNames;
-import com.nimbusds.jwt.JWTClaimsSet;
+import com.fh.fh.models.User;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -25,17 +23,16 @@ public class TokenService {
     this.encoder = encoder;
   }
 
-  public String generateToken(Authentication authentication) {
+  public String generateToken(User user) {
 
     Instant now = Instant.now();
-    String scope = authentication.getAuthorities().stream()
-        .map(GrantedAuthority::getAuthority)
+    String scope = Arrays.stream(user.getRoles().split(","))
         .collect(Collectors.joining(" "));
     JwtClaimsSet claims = JwtClaimsSet.builder()
         .issuer("zbyna")
         .issuedAt(now)
         .expiresAt(now.plus(expiracy, ChronoUnit.MINUTES))
-        .subject(authentication.getName())
+        .subject(user.getUsername())
         .claim("scope", scope)
         .build();
     return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
