@@ -12,8 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 @EnableConfigurationProperties(RsaKeyProperties.class)
-public class FhApplication implements CommandLineRunner {
-
+public class FhApplication {
 
   private final UserRepository userRepository;
 
@@ -23,13 +22,5 @@ public class FhApplication implements CommandLineRunner {
 
   public static void main(String[] args) {
     SpringApplication.run(FhApplication.class, args);
-  }
-
-  @Override
-  public void run(String... args) throws Exception {
-
-    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    User user = new User("zbyna", passwordEncoder.encode("1234"), "ROLE_USER");
-    userRepository.save(user);
   }
 }

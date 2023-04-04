@@ -36,9 +36,8 @@ public class LoginService {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUsername, loginPassword));
 
     String token = tokenService.generateToken(user);
-    Jwt jwt = decoder.decode(token);
 
-    LoginSuccesDTO dto = new LoginSuccesDTO(loginUsername, token, jwt.getExpiresAt());
+    LoginSuccesDTO dto = new LoginSuccesDTO(loginUsername, token, user.getDollar().getAmount());
     return dto;
   }
 

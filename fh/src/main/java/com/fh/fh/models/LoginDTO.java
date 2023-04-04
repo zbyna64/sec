@@ -1,8 +1,13 @@
 package com.fh.fh.models;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class LoginDTO {
 
+  @NotBlank(message = "username can not be blank")
   private String username;
+  @NotBlank(message = "password can not be blank")
   private String password;
 
   public LoginDTO() {

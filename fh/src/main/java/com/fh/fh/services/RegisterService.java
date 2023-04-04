@@ -14,9 +14,11 @@ public class RegisterService {
 
   private PasswordEncoder encoder = new BCryptPasswordEncoder();
   private final UserRepository userRepository;
+  private final UserService userService;
 
-  public RegisterService(UserRepository userRepository) {
+  public RegisterService(UserRepository userRepository, UserService userService) {
     this.userRepository = userRepository;
+    this.userService = userService;
   }
 
   public RegisterSuccessDTO register(RegisterDTO registerDTO) {
@@ -27,7 +29,7 @@ public class RegisterService {
     if (userRepository.existsByUsername(username)) {
       throw new InvalidParameterException("Username: `" + username + "` already taken");
     }
-    User user = userRepository.save(new User(username, encoder.encode(password)));
+    User user = userService.createUserWithDollars(username, password);
     return new RegisterSuccessDTO("Success", "Registration completed with username: " + username);
   }
 }

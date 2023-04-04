@@ -3,6 +3,7 @@ package com.fh.fh.models;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,6 +16,8 @@ public class User {
   private String username;
   private String password;
   private String roles;
+  @OneToOne
+  private GreenBayDollar dollar;
 
   public User() {
   }
@@ -61,6 +64,14 @@ public class User {
 
   public void setRoles(String roles) {
     this.roles = roles;
+  }
+
+  public GreenBayDollar getDollar() {
+    return dollar;
+  }
+
+  public void setDollar(GreenBayDollar dollar) {
+    this.dollar = dollar;
   }
 
   @Override

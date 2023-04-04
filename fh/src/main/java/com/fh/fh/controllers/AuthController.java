@@ -40,7 +40,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<LoginSuccesDTO> token(@RequestBody LoginDTO loginDTO) {
+  public ResponseEntity<LoginSuccesDTO> token(@Valid @RequestBody LoginDTO loginDTO) {
     LoginSuccesDTO token = loginService.login(loginDTO);
     return ResponseEntity.ok().body(token);
   }
@@ -52,10 +52,16 @@ public class AuthController {
 
   }
 
-  @ExceptionHandler({InvalidParameterException.class, MethodArgumentNotValidException.class})
+  @ExceptionHandler({InvalidParameterException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorResponse handleRegistrationException(Exception e, HttpServletRequest request) {
     return new ErrorResponse("400", e.getMessage(), request.getRequestURI());
+  }
+
+  @ExceptionHandler({MethodArgumentNotValidException.class})
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorResponse handleRegistrationConstraintException(MethodArgumentNotValidException e, HttpServletRequest request) {
+    return new ErrorResponse("400", e.getBindingResult().getFieldError().getDefaultMessage(), request.getRequestURI());
   }
 
   @ExceptionHandler(UsernameNotFoundException.class)

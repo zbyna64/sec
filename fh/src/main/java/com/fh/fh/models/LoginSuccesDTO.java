@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.time.Instant;
 import org.springframework.format.annotation.DateTimeFormat;
 
-@JsonPropertyOrder({"username", "validity", "token"})
+@JsonPropertyOrder({"username", "dollars", "token"})
 public class LoginSuccesDTO {
 
 
@@ -13,13 +13,13 @@ public class LoginSuccesDTO {
   @JsonProperty("JWT token:")
   @DateTimeFormat
   private String token;
-  @JsonProperty("Valid until:")
-  private Instant validity;
+  @JsonProperty("Green-bay dollars: $ ")
+  private Long dollars;
 
-  public LoginSuccesDTO(String username, String token, Instant validity) {
+  public LoginSuccesDTO(String username, String token, Long dollars) {
     this.username = username;
     this.token = token;
-    this.validity = validity;
+    this.dollars = dollars;
   }
 
   public String getUsername() {
@@ -38,11 +38,11 @@ public class LoginSuccesDTO {
     this.token = token;
   }
 
-  public Instant getValidity() {
-    return validity;
+  public Long getDollars() {
+    return dollars;
   }
 
-  public void setValidity(Instant validity) {
-    this.validity = validity;
+  public void setDollars(Long dollars) {
+    this.dollars = dollars;
   }
 }
