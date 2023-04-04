@@ -1,8 +1,12 @@
 package com.fh.fh.models;
 
-public class RegisterDTO {
+import javax.validation.constraints.Min;
+import org.hibernate.validator.constraints.Length;
 
+public class RegisterDTO {
+  @Length(min = 4, message = "Length must be atleast 4 characters")
   private String username;
+  @Length(min = 4, message = "Length must be atleast 4 characters")
   private String password;
 
   public RegisterDTO() {

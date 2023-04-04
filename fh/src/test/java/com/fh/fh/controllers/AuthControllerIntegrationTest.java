@@ -57,6 +57,32 @@ public class AuthControllerIntegrationTest {
   }
 
   @Test
+  public void testRegistrationConstraintLengthUsername() throws Exception {
+
+    RegisterDTO registerDTO = new RegisterDTO("z", "1234");
+
+    mockMvc.perform(post("/auth/register").with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(registerDTO)))
+        .andExpect(status().isBadRequest())
+        .andDo(print())
+        .andExpect(jsonPath("$.status", is("400")));
+  }
+
+  @Test
+  public void testRegistrationConstraintLengthPassword() throws Exception {
+
+    RegisterDTO registerDTO = new RegisterDTO("zbynaa", "14");
+
+    mockMvc.perform(post("/auth/register").with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(registerDTO)))
+        .andExpect(status().isBadRequest())
+        .andDo(print())
+        .andExpect(jsonPath("$.status", is("400")));
+  }
+
+  @Test
   public void testRegistrationWithExistingUsername() throws Exception {
 
     RegisterDTO registerDTO = new RegisterDTO("zbyna", "1234");

@@ -9,10 +9,12 @@ import com.fh.fh.services.LoginService;
 import com.fh.fh.services.RegisterService;
 import java.security.InvalidParameterException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +35,7 @@ public class AuthController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<RegisterSuccessDTO> token(@RequestBody RegisterDTO registerDTO) {
+  public ResponseEntity<RegisterSuccessDTO> token(@Valid @RequestBody RegisterDTO registerDTO) {
     return ResponseEntity.status(201).body(registerService.register(registerDTO));
   }
 
@@ -50,9 +52,9 @@ public class AuthController {
 
   }
 
-  @ExceptionHandler(InvalidParameterException.class)
+  @ExceptionHandler({InvalidParameterException.class, MethodArgumentNotValidException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ErrorResponse handleRegistrationException(InvalidParameterException e, HttpServletRequest request) {
+  public ErrorResponse handleRegistrationException(Exception e, HttpServletRequest request) {
     return new ErrorResponse("400", e.getMessage(), request.getRequestURI());
   }
 
