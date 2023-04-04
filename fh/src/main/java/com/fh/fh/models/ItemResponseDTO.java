@@ -2,26 +2,41 @@ package com.fh.fh.models;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-public class ItemDTO {
+public class ItemResponseDTO {
 
-  @NotBlank
+  private Long id;
   private String name;
-  @NotBlank
   private String description;
-  @Min(value = 0, message = "price must be positive number")
   private Double startingPrice;
-  @Min(value = 0, message = "price must be positive number")
   private Double purchasePrice;
 
-  public ItemDTO() {
+  public ItemResponseDTO() {
   }
 
-  public ItemDTO(String name, String description, Double startingPrice, Double purchasePrice) {
+  public ItemResponseDTO(Item item) {
+    this.id = item.getId();
+    this.name = item.getName();
+    this.description = item.getDescription();
+    this.startingPrice = item.getStartingPrice();
+    this.purchasePrice = item.getPurchasePrice();
+  }
+
+  public ItemResponseDTO(Long id, String name, String description, Double startingPrice, Double purchasePrice) {
+    this.id = id;
     this.name = name;
     this.description = description;
     this.startingPrice = startingPrice;
     this.purchasePrice = purchasePrice;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getName() {

@@ -1,47 +1,30 @@
 package com.fh.fh.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-@Entity
-@Table(name = "items")
-public class Item {
+public class ItemRequestDTO {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
-  @NotBlank
+  @NotBlank(message = "Field name is missing")
   private String name;
-  @NotBlank
+  @NotBlank(message = "Field description is missing")
   private String description;
   @Min(value = 0, message = "price must be positive number")
+  @NotNull(message = "Starting price must have value assigned")
   private Double startingPrice;
   @Min(value = 0, message = "price must be positive number")
+  @NotNull(message = "Purchase price must have value assigned")
   private Double purchasePrice;
-  private boolean sold;
 
-  public Item() {
+  public ItemRequestDTO() {
   }
 
-  public Item(String name, String description, Double startingPrice, Double purchasePrice) {
+  public ItemRequestDTO(String name, String description, Double startingPrice, Double purchasePrice) {
     this.name = name;
     this.description = description;
     this.startingPrice = startingPrice;
     this.purchasePrice = purchasePrice;
-    this.sold = false;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public String getName() {
@@ -74,13 +57,5 @@ public class Item {
 
   public void setPurchasePrice(Double purchasePrice) {
     this.purchasePrice = purchasePrice;
-  }
-
-  public boolean isSold() {
-    return sold;
-  }
-
-  public void setSold(boolean sold) {
-    this.sold = sold;
   }
 }

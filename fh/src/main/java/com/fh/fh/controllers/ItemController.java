@@ -1,15 +1,17 @@
 package com.fh.fh.controllers;
 
-import com.fh.fh.models.ItemDTO;
+import com.fh.fh.models.ErrorResponse;
+import com.fh.fh.models.ItemRequestDTO;
+import com.fh.fh.models.ItemResponseDTO;
 import com.fh.fh.services.ItemService;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/items")
@@ -24,11 +26,17 @@ public class ItemController {
 
   @GetMapping
   public ResponseEntity listAllItems() {
-    return null;
+    return ResponseEntity.ok().body(itemService.listAllItems());
   }
 
   @PostMapping
-  public ResponseEntity createItem(@Valid @RequestBody ItemDTO itemDTO) {
-    return ResponseEntity.status(201).body(itemService.createItem(itemDTO));
+  public ResponseEntity<ItemResponseDTO> createItem(@Valid @RequestBody ItemRequestDTO itemRequestDTO) {
+    return ResponseEntity.status(201).body(itemService.createItem(itemRequestDTO));
+  }
+
+  @ExceptionHandler({MethodArgumentNotValidException.class})
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorResponse handleRegistrationConstraintException(MethodArgumentNotValidException e, HttpServletRequest request) {
+    return new ErrorResponse("400", e.getBindingResult().getFieldError().getDefaultMessage(), request.getRequestURI());
   }
 }
