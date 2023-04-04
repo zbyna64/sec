@@ -4,9 +4,17 @@
 
 ### /auth/register 
 * register new user
-* body (username, password)
+```java
+@RequestBody
+{"username": "name",
+"password" : "pass"}
+```
 
 ### /auth/login
 * login user
-* body (username, password)
+```java
+@RequestBody
+{"username": "name",
+"password" : "pass"}
+```
 * return JWT token 
