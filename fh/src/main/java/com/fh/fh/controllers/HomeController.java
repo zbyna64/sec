@@ -13,4 +13,19 @@ public class HomeController {
   public String home() {
     return "hello";
   }
+
+
+  @GetMapping("/admin")
+  @ResponseBody
+  public String admin() {
+    return "hello admin";
+  }
+
+
+  @GetMapping("/user")
+  @ResponseBody
+  public String user() {
+    return "hello user";
+  }
+
 }

@@ -10,6 +10,7 @@ import com.fh.fh.services.RegisterService;
 import java.security.InvalidParameterException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,14 +33,14 @@ public class AuthController {
   }
 
   @PostMapping("/register")
-  public RegisterSuccessDTO token(@RequestBody RegisterDTO registerDTO) {
-    return registerService.register(registerDTO);
+  public ResponseEntity<RegisterSuccessDTO> token(@RequestBody RegisterDTO registerDTO) {
+    return ResponseEntity.status(201).body(registerService.register(registerDTO));
   }
 
   @PostMapping("/login")
-  public LoginSuccesDTO token(@RequestBody LoginDTO loginDTO) {
+  public ResponseEntity<LoginSuccesDTO> token(@RequestBody LoginDTO loginDTO) {
     LoginSuccesDTO token = loginService.login(loginDTO);
-    return token;
+    return ResponseEntity.ok().body(token);
   }
 
   @ExceptionHandler(AuthenticationException.class)
