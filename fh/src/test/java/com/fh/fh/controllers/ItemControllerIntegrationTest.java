@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fh.fh.models.ItemRequestDTO;
+import com.fh.fh.models.User;
 import com.fh.fh.services.CustomUserDetailService;
 import com.fh.fh.services.ItemService;
 import com.fh.fh.services.UserService;
@@ -31,6 +32,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -98,12 +101,13 @@ public class ItemControllerIntegrationTest {
 
   @org.junit.Test
   public void listAllItems_ReturnList() throws Exception {
+    Authentication authentication = new UsernamePasswordAuthenticationToken("zbyna", "1234");
     ItemRequestDTO itemRequestDTO1 = new ItemRequestDTO("test1", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO2 = new ItemRequestDTO("test2", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO3 = new ItemRequestDTO("test3", "test des", 1.1, 2.2);
-    itemService.createItem(itemRequestDTO1);
-    itemService.createItem(itemRequestDTO2);
-    itemService.createItem(itemRequestDTO3);
+    itemService.createItem(itemRequestDTO1, authentication);
+    itemService.createItem(itemRequestDTO2, authentication);
+    itemService.createItem(itemRequestDTO3, authentication);
 
     mvc.perform(get("/items")
             .with(csrf())
@@ -118,18 +122,20 @@ public class ItemControllerIntegrationTest {
 
   @org.junit.Test
   public void listAllItemsPage1_ReturnListWithSize5() throws Exception {
+    Authentication authentication = new UsernamePasswordAuthenticationToken("zbyna", "1234");
+
     ItemRequestDTO itemRequestDTO1 = new ItemRequestDTO("test1", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO2 = new ItemRequestDTO("test2", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO3 = new ItemRequestDTO("test3", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO4 = new ItemRequestDTO("test4", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO5 = new ItemRequestDTO("test5", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO6 = new ItemRequestDTO("test6", "test des", 1.1, 2.2);
-    itemService.createItem(itemRequestDTO1);
-    itemService.createItem(itemRequestDTO2);
-    itemService.createItem(itemRequestDTO3);
-    itemService.createItem(itemRequestDTO4);
-    itemService.createItem(itemRequestDTO5);
-    itemService.createItem(itemRequestDTO6);
+    itemService.createItem(itemRequestDTO1, authentication);
+    itemService.createItem(itemRequestDTO2, authentication);
+    itemService.createItem(itemRequestDTO3, authentication);
+    itemService.createItem(itemRequestDTO4, authentication);
+    itemService.createItem(itemRequestDTO5, authentication);
+    itemService.createItem(itemRequestDTO6, authentication);
 
     mvc.perform(get("/items")
             .with(csrf())
@@ -144,18 +150,20 @@ public class ItemControllerIntegrationTest {
   }
   @org.junit.Test
   public void listAllItemsPage2_ReturnListWithSize1() throws Exception {
+    Authentication authentication = new UsernamePasswordAuthenticationToken("zbyna", "1234");
+
     ItemRequestDTO itemRequestDTO1 = new ItemRequestDTO("test1", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO2 = new ItemRequestDTO("test2", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO3 = new ItemRequestDTO("test3", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO4 = new ItemRequestDTO("test4", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO5 = new ItemRequestDTO("test5", "test des", 1.1, 2.2);
     ItemRequestDTO itemRequestDTO6 = new ItemRequestDTO("test6", "test des", 1.1, 2.2);
-    itemService.createItem(itemRequestDTO1);
-    itemService.createItem(itemRequestDTO2);
-    itemService.createItem(itemRequestDTO3);
-    itemService.createItem(itemRequestDTO4);
-    itemService.createItem(itemRequestDTO5);
-    itemService.createItem(itemRequestDTO6);
+    itemService.createItem(itemRequestDTO1, authentication);
+    itemService.createItem(itemRequestDTO2, authentication);
+    itemService.createItem(itemRequestDTO3, authentication);
+    itemService.createItem(itemRequestDTO4, authentication);
+    itemService.createItem(itemRequestDTO5, authentication);
+    itemService.createItem(itemRequestDTO6, authentication);
 
     mvc.perform(get("/items")
             .param("page", "2")

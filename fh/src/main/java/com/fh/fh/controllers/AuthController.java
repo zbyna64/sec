@@ -45,28 +45,5 @@ public class AuthController {
     return ResponseEntity.ok().body(token);
   }
 
-  @ExceptionHandler(AuthenticationException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ErrorResponse handleAuthenticationError(AuthenticationException e, HttpServletRequest request) {
-    return new ErrorResponse("401", e.getMessage(), request.getRequestURI());
 
-  }
-
-  @ExceptionHandler({InvalidParameterException.class})
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ErrorResponse handleRegistrationException(Exception e, HttpServletRequest request) {
-    return new ErrorResponse("400", e.getMessage(), request.getRequestURI());
-  }
-
-  @ExceptionHandler({MethodArgumentNotValidException.class})
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ErrorResponse handleRegistrationConstraintException(MethodArgumentNotValidException e, HttpServletRequest request) {
-    return new ErrorResponse("400", e.getBindingResult().getFieldError().getDefaultMessage(), request.getRequestURI());
-  }
-
-  @ExceptionHandler(UsernameNotFoundException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ErrorResponse handleLoginException(UsernameNotFoundException e, HttpServletRequest request) {
-    return new ErrorResponse("400", e.getMessage(), request.getRequestURI());
-  }
 }

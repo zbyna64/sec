@@ -1,9 +1,11 @@
 package com.fh.fh.models;
 
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -17,8 +19,12 @@ public class User {
   private String username;
   private String password;
   private String roles;
+  @OneToMany(mappedBy = "user")
+  private List<Bid> bids;
   @OneToOne
   private GreenBayDollar dollar;
+  @OneToMany(mappedBy = "seller")
+  private List<Item> items;
 
   public User() {
   }
@@ -73,6 +79,14 @@ public class User {
 
   public void setDollar(GreenBayDollar dollar) {
     this.dollar = dollar;
+  }
+
+  public List<Bid> getBids() {
+    return bids;
+  }
+
+  public void setBids(List<Bid> bids) {
+    this.bids = bids;
   }
 
   @Override
