@@ -7,7 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fh.fh.models.User;
 import com.fh.fh.services.CustomUserDetailService;
+import com.fh.fh.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class HomeControllerTest {
   MockMvc mockMvc;
   @Autowired
   CustomUserDetailService userDetailService;
+  @Autowired
+  UserService userService;
 
   @Test
   public void testUnauthorizedUser() throws Exception {
@@ -45,6 +49,7 @@ public class HomeControllerTest {
   @Test
   public void testAuthorizedUser() throws Exception {
 
+    userService.createUserWithDollars("zbyna", "1234");
     mockMvc.perform(MockMvcRequestBuilders.get("/")
             .with(user(userDetailService.loadUserByUsername("zbyna"))))
         .andDo(print())

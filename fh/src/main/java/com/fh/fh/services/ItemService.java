@@ -50,17 +50,17 @@ public class ItemService {
     User user = userService.findByUsername(authentication.getName());
     Item item = new Item(itemRequestDTO.getName(), itemRequestDTO.getDescription(), itemRequestDTO.getStartingPrice(), itemRequestDTO.getPurchasePrice(), user);
     item = itemRepository.save(item);
-    return convertResponseObject(item);
+    return convertItemToResponseDTO(item);
   }
 
-  public ItemResponseDTO convertResponseObject(Item item) {
+  public ItemResponseDTO convertItemToResponseDTO(Item item) {
     return new ItemResponseDTO(item);
   }
 
   public Item findItemById(Long id) {
     return itemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No item with ID:" + id));
   }
-  public ItemDetailResponseDTO listItem(Long id) {
+  public ItemDetailResponseDTO listItemById(Long id) {
     Item item = findItemById(id);
     List<BidDTO> bidDTOList = item.getBids()
         .stream()

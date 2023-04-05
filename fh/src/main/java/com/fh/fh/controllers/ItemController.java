@@ -1,23 +1,18 @@
 package com.fh.fh.controllers;
 
 import com.fh.fh.models.BidRequestDTO;
-import com.fh.fh.models.ErrorResponse;
 import com.fh.fh.models.ItemDetailResponseDTO;
 import com.fh.fh.models.ItemListResponseDTO;
 import com.fh.fh.models.ItemRequestDTO;
 import com.fh.fh.models.ItemResponseDTO;
 import com.fh.fh.services.ItemService;
 
-import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,7 +38,7 @@ public class ItemController {
   @GetMapping("/{id}")
   public ResponseEntity<ItemDetailResponseDTO> listItem(@PathVariable Long id) {
 
-    ItemDetailResponseDTO itemDetail = itemService.listItem(id);
+    ItemDetailResponseDTO itemDetail = itemService.listItemById(id);
     return ResponseEntity.status(200).body(itemDetail);
 
   }
