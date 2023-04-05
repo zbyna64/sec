@@ -37,19 +37,14 @@ public class ItemService {
   }
 
   public List<ItemListResponseDTO> listAllItems(int page) {
-     return listItemsAscOrderById(page);
-
-  }
-
-  public List<ItemListResponseDTO> listItemsAscOrderById(int page) {
 
     Pageable pageToShow = PageRequest.of(page - 1, pageSize, Sort.by("id").ascending());
-
     return itemRepository.findAll(pageToShow).stream()
         .filter(item -> !item.isSold())
         .map(ItemListResponseDTO::new)
         .collect(Collectors.toList());
   }
+
 
   public ItemResponseDTO createItem(ItemRequestDTO itemRequestDTO, Authentication authentication) {
     User user = userService.findByUsername(authentication.getName());
