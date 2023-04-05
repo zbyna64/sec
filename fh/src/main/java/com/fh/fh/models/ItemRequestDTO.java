@@ -20,6 +20,11 @@ public class ItemRequestDTO {
   public ItemRequestDTO() {
   }
 
+  public ItemRequestDTO(String description, Double startingPrice, Double purchasePrice) {
+    this.description = description;
+    this.startingPrice = startingPrice;
+    this.purchasePrice = purchasePrice;
+  }
   public ItemRequestDTO(String name, String description, Double startingPrice, Double purchasePrice) {
     this.name = name;
     this.description = description;

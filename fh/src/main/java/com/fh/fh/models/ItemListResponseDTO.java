@@ -4,18 +4,18 @@ public class ItemListResponseDTO {
 
   private Long id;
   private String name;
-  private Double startingPrice;
+  private Double purchasePrice;
 
-  public ItemListResponseDTO(Long id, String name, Double startingPrice) {
+  public ItemListResponseDTO(Long id, String name, Double purchasePrice) {
     this.id = id;
     this.name = name;
-    this.startingPrice = startingPrice;
+    this.purchasePrice = purchasePrice;
   }
 
   public ItemListResponseDTO(Item item) {
     this.id = item.getId();
     this.name = item.getName();
-    this.startingPrice = item.getStartingPrice();
+    this.purchasePrice = item.getPurchasePrice();
   }
 
   public Long getId() {
@@ -35,10 +35,10 @@ public class ItemListResponseDTO {
   }
 
   public Double getStartingPrice() {
-    return startingPrice;
+    return purchasePrice;
   }
 
   public void setStartingPrice(Double startingPrice) {
-    this.startingPrice = startingPrice;
+    this.purchasePrice = startingPrice;
   }
 }

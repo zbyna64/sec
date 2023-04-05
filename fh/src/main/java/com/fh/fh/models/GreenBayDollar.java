@@ -13,7 +13,7 @@ import org.springframework.lang.Nullable;
 public class GreenBayDollar {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long Id;
   private Long amount;
   @OneToOne(mappedBy = "dollar")

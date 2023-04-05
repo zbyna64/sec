@@ -30,6 +30,7 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     runtimeOnly 'com.h2database:h2'
     implementation 'org.hibernate:hibernate-validator:8.0.0.Final'
+    testImplementation 'org.junit.vintage:junit-vintage-engine:5.8.2'
 }
 
 tasks.named('test') {
