@@ -33,6 +33,8 @@ public class Item {
   private List<Bid> bids;
   @ManyToOne
   private User seller;
+  @ManyToOne
+  private User buyer;
 
   public Item() {
   }
@@ -109,5 +111,13 @@ public class Item {
 
   public void setSeller(User seller) {
     this.seller = seller;
+  }
+
+  public User getBuyer() {
+    return buyer;
+  }
+
+  public void setBuyer(User buyer) {
+    this.buyer = buyer;
   }
 }

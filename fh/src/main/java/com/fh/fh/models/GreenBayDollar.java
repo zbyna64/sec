@@ -15,7 +15,7 @@ public class GreenBayDollar {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long Id;
-  private Long amount;
+  private Double amount;
   @OneToOne(mappedBy = "dollar")
   @Nullable
   private User user;
@@ -23,15 +23,15 @@ public class GreenBayDollar {
   public GreenBayDollar() {
   }
 
-  public GreenBayDollar(Long amount) {
+  public GreenBayDollar(Double amount) {
     this.amount = amount;
   }
 
-  public Long getAmount() {
+  public Double getAmount() {
     return amount;
   }
 
-  public void setAmount(Long amount) {
+  public void setAmount(Double amount) {
     this.amount = amount;
   }
 

@@ -10,8 +10,10 @@ import com.fh.fh.models.ItemRequestDTO;
 import com.fh.fh.models.ItemResponseDTO;
 import com.fh.fh.models.User;
 import com.fh.fh.repositories.ItemRepository;
+import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.naming.InsufficientResourcesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -37,10 +39,16 @@ public class ItemService {
   }
 
   public List<ItemListResponseDTO> listAllItems(int page) {
-
     Pageable pageToShow = PageRequest.of(page - 1, pageSize, Sort.by("id").ascending());
     return itemRepository.findAll(pageToShow).stream()
         .filter(item -> !item.isSold())
+        .map(ItemListResponseDTO::new)
+        .collect(Collectors.toList());
+  }
+
+  public List<ItemListResponseDTO> listAllActiveItems(int page) {
+    Pageable pageToShow = PageRequest.of(page - 1, pageSize, Sort.by("id").ascending());
+    return itemRepository.findAllBySold(false, pageToShow).stream()
         .map(ItemListResponseDTO::new)
         .collect(Collectors.toList());
   }
@@ -60,25 +68,43 @@ public class ItemService {
   public Item findItemById(Long id) {
     return itemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No item with ID:" + id));
   }
+
   public ItemDetailResponseDTO listItemById(Long id) {
     Item item = findItemById(id);
-    List<BidDTO> bidDTOList = item.getBids()
-        .stream()
-        .map(BidDTO::new)
-        .collect(Collectors.toList());
-    return new ItemDetailResponseDTO(item, bidDTOList, null);
+    List<BidDTO> bidDTOList = bidService.convertToBidDTOList(item);
+    return new ItemDetailResponseDTO(item, bidDTOList);
   }
 
-  public ItemDetailResponseDTO bidItem(Long id, BidRequestDTO bidRequestDTO, Authentication authentication) {
+  public ItemDetailResponseDTO bidItem(Long id, BidRequestDTO bidRequestDTO, Authentication authentication)
+      throws InsufficientResourcesException {
     Item item = findItemById(id);
     Double bidPrice = bidRequestDTO.getBidPrice();
     User user = userService.findByUsername(authentication.getName());
-    Bid bid = bidService.createBid(user, item, bidPrice);
-    List<BidDTO> bidDTOList = bidService.listBidsForItem(item)
-        .stream()
-        .map(BidDTO::new)
-        .collect(Collectors.toList());
 
-    return new ItemDetailResponseDTO(item, bidDTOList, null);
+    isSellable(item);
+    userService.canAffordBid(bidPrice, user);
+    bidService.isBidHigherThanLastBid(item, bidPrice);
+    Bid bid = bidService.createBid(user, item, bidPrice);
+    List<BidDTO> bidDTOList = bidService.convertToBidDTOList(item);
+
+    if (bidService.isBidEnoughToPurchaseItem(item, bidPrice)) {
+      userService.buyItem(user, item, bidPrice);
+      item = buyItem(item, user);
+      return new ItemDetailResponseDTO(item, bidDTOList);
+
+    }
+    return new ItemDetailResponseDTO(item, bidDTOList);
+  }
+
+  public Item buyItem(Item item, User user) {
+    item.setSold(true);
+    item.setBuyer(user);
+    return itemRepository.save(item);
+  }
+
+  public void isSellable(Item item) {
+    if (item.isSold()) {
+      throw new InvalidParameterException("Item is already sold. Owner is " + item.getBuyer().getUsername());
+    }
   }
 }

@@ -2,6 +2,7 @@ package com.fh.fh.controllers.advice;
 
 import com.fh.fh.models.ErrorResponse;
 import java.security.InvalidParameterException;
+import javax.naming.InsufficientResourcesException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -41,6 +42,12 @@ public class RestAdvice {
   @ExceptionHandler(UsernameNotFoundException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorResponse handleLoginException(UsernameNotFoundException e, HttpServletRequest request) {
+    return new ErrorResponse("400", e.getMessage(), request.getRequestURI());
+  }
+
+  @ExceptionHandler(InsufficientResourcesException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorResponse handleResourceException(InsufficientResourcesException e, HttpServletRequest request) {
     return new ErrorResponse("400", e.getMessage(), request.getRequestURI());
   }
 }

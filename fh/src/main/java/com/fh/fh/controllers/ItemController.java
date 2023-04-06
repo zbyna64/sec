@@ -8,6 +8,7 @@ import com.fh.fh.models.ItemResponseDTO;
 import com.fh.fh.services.ItemService;
 
 import java.util.List;
+import javax.naming.InsufficientResourcesException;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class ItemController {
 
   @GetMapping()
   public ResponseEntity<?> listAllItems(@Min (1) @RequestParam(required = false, defaultValue = "1") int page) {
-    List<ItemListResponseDTO> listResponseDTOList = itemService.listAllItems(page);
+    List<ItemListResponseDTO> listResponseDTOList = itemService.listAllActiveItems(page);
     if (listResponseDTOList.isEmpty()) {
       return ResponseEntity.status(204).build();
     }
@@ -49,7 +50,8 @@ public class ItemController {
   }
 
   @PostMapping("/{id}")
-  public ResponseEntity bid(@PathVariable Long id, @RequestBody BidRequestDTO bidRequestDTO, Authentication authentication) {
+  public ResponseEntity bid(@PathVariable Long id, @Valid @RequestBody BidRequestDTO bidRequestDTO, Authentication authentication)
+      throws InsufficientResourcesException {
 
     ItemDetailResponseDTO itemDetail = itemService.bidItem(id, bidRequestDTO, authentication);
     return ResponseEntity.status(200).body(itemDetail);
