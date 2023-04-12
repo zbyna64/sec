@@ -26,6 +26,9 @@ public class User {
   @OneToMany(mappedBy = "seller")
   private List<Item> items;
 
+  @OneToMany(mappedBy = "buyer")
+  private List<Item> ownedItems;
+
   public User() {
   }
 
@@ -87,6 +90,22 @@ public class User {
 
   public void setBids(List<Bid> bids) {
     this.bids = bids;
+  }
+
+  public List<Item> getItems() {
+    return items;
+  }
+
+  public void setItems(List<Item> items) {
+    this.items = items;
+  }
+
+  public List<Item> getOwnedItems() {
+    return ownedItems;
+  }
+
+  public void setOwnedItems(List<Item> ownedItems) {
+    this.ownedItems = ownedItems;
   }
 
   @Override

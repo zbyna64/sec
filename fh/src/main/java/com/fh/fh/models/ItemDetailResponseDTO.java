@@ -1,6 +1,7 @@
 package com.fh.fh.models;
 
 import java.util.List;
+import org.springframework.lang.Nullable;
 
 public class ItemDetailResponseDTO {
   private Long id;
@@ -9,21 +10,25 @@ public class ItemDetailResponseDTO {
   private Double sellingPrice;
   private Double startingPrice;
   private List<BidDTO> bids;
+  @Nullable
   private String seller;
   private String buyer;
 
   public ItemDetailResponseDTO() {
   }
 
-  public ItemDetailResponseDTO(Item item, List<BidDTO> bids, String buyer) {
+  public ItemDetailResponseDTO(Item item, List<BidDTO> bids) {
     this.id = item.getId();
     this.name = item.getName();
     this.description = item.getDescription();
     this.bids = bids;
     this.sellingPrice = item.getPurchasePrice();
     this.startingPrice = item.getStartingPrice();
-    this.buyer = buyer;
     this.seller = item.getSeller().getUsername();
+    if (item.getBuyer() != null) {
+      this.buyer = item.getBuyer().getUsername();
+    }
+
   }
 
   public Long getId() {

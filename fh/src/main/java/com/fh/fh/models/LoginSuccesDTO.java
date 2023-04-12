@@ -14,9 +14,9 @@ public class LoginSuccesDTO {
   @DateTimeFormat
   private String token;
   @JsonProperty("Green-bay dollars: $ ")
-  private Long dollars;
+  private Double dollars;
 
-  public LoginSuccesDTO(String username, String token, Long dollars) {
+  public LoginSuccesDTO(String username, String token, Double dollars) {
     this.username = username;
     this.token = token;
     this.dollars = dollars;
@@ -38,11 +38,11 @@ public class LoginSuccesDTO {
     this.token = token;
   }
 
-  public Long getDollars() {
+  public Double getDollars() {
     return dollars;
   }
 
-  public void setDollars(Long dollars) {
+  public void setDollars(Double dollars) {
     this.dollars = dollars;
   }
 }

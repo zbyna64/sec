@@ -1,8 +1,11 @@
 package com.fh.fh.models;
 
 
+import javax.validation.constraints.Min;
+
 public class BidRequestDTO {
 
+  @Min(value = 0, message = "Bid must be positive number")
   private Double bidPrice;
 
   public BidRequestDTO() {
