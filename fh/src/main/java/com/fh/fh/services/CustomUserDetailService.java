@@ -1,9 +1,7 @@
 package com.fh.fh.services;
 
 import com.fh.fh.models.SecurityUser;
-import com.fh.fh.models.User;
 import com.fh.fh.repositories.UserRepository;
-import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

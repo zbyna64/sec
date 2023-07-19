@@ -1,10 +1,6 @@
 package com.fh.fh.services;
 
-import com.fh.fh.models.Item;
-import com.fh.fh.models.ItemRequestDTO;
-import com.fh.fh.models.ItemResponseDTO;
 import com.fh.fh.models.User;
-import com.fh.fh.repositories.ItemRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,7 +9,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 

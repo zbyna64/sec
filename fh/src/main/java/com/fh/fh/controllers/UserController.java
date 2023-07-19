@@ -1,7 +1,5 @@
 package com.fh.fh.controllers;
 
-import com.fh.fh.models.BalanceDTO;
-import com.fh.fh.models.BalanceResponseDTO;
 import com.fh.fh.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

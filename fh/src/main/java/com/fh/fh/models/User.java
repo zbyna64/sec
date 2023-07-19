@@ -19,15 +19,6 @@ public class User {
   private String username;
   private String password;
   private String roles;
-  @OneToMany(mappedBy = "user")
-  private List<Bid> bids;
-  @OneToOne
-  private GreenBayDollar dollar;
-  @OneToMany(mappedBy = "seller")
-  private List<Item> items;
-
-  @OneToMany(mappedBy = "buyer")
-  private List<Item> ownedItems;
 
   public User() {
   }
@@ -74,47 +65,5 @@ public class User {
 
   public void setRoles(String roles) {
     this.roles = roles;
-  }
-
-  public GreenBayDollar getDollar() {
-    return dollar;
-  }
-
-  public void setDollar(GreenBayDollar dollar) {
-    this.dollar = dollar;
-  }
-
-  public List<Bid> getBids() {
-    return bids;
-  }
-
-  public void setBids(List<Bid> bids) {
-    this.bids = bids;
-  }
-
-  public List<Item> getItems() {
-    return items;
-  }
-
-  public void setItems(List<Item> items) {
-    this.items = items;
-  }
-
-  public List<Item> getOwnedItems() {
-    return ownedItems;
-  }
-
-  public void setOwnedItems(List<Item> ownedItems) {
-    this.ownedItems = ownedItems;
-  }
-
-  @Override
-  public String toString() {
-    return "User{" +
-        "id=" + id +
-        ", username='" + username + '\'' +
-        ", password='" + password + '\'' +
-        ", roles='" + roles + '\'' +
-        '}';
   }
 }
