@@ -33,9 +33,9 @@ public class TokenService {
     String scope = Arrays.stream(user.getRoles().split(","))
         .collect(Collectors.joining(" "));
     JwtClaimsSet claims = JwtClaimsSet.builder()
-        .issuer("zbyna")
+        .issuer("dCOS")
         .issuedAt(now)
-        .expiresAt(now.plus(expiracy, ChronoUnit.MINUTES))
+//        .expiresAt()
         .subject(user.getUsername())
         .claim("scope", scope)
         .build();
