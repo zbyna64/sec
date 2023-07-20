@@ -3,6 +3,7 @@ package com.fh.fh.controllers;
 import com.fh.fh.models.ExpirationResponse;
 import com.fh.fh.models.TokenResponse;
 import com.fh.fh.security.TokenService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +16,10 @@ import java.time.Instant;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    private final TokenService tokenService;
 
-    public AuthController(TokenService tokenService) {
-        this.tokenService = tokenService;
-    }
+    private final TokenService tokenService;
 
     @GetMapping("/token")
     public ResponseEntity<TokenResponse> token(Authentication authentication) throws ParseException {

@@ -3,6 +3,7 @@ package com.fh.fh.security;
 import com.fh.fh.models.ExpirationResponse;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -18,16 +19,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TokenService {
 
     private final JwtEncoder encoder;
-    @Value("${jwt.expiracy}")
-    private int expiracy;
-
-
-    public TokenService(JwtEncoder encoder) {
-        this.encoder = encoder;
-    }
+    @Value("${jwt.expirationHours}")
+    private int expirationHours;
 
     public String generateToken(Authentication authentication) {
 
@@ -39,7 +36,7 @@ public class TokenService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("dCOS")
                 .issuedAt(now)
-                .expiresAt(now.plus(expiracy, ChronoUnit.HOURS))
+                .expiresAt(now.plus(expirationHours, ChronoUnit.HOURS))
                 .subject(authentication.getName())
                 .claim("scope", scope)
                 .build();
