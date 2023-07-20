@@ -1,4 +1,4 @@
-package com.fh.fh.controllers.advice;
+package com.fh.fh.exceptions;
 
 import com.fh.fh.models.ErrorResponse;
 import java.security.InvalidParameterException;

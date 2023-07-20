@@ -2,7 +2,6 @@ package com.fh.fh.security;
 
 import com.fh.fh.exceptions.RestAccessDeniedHandler;
 import com.fh.fh.exceptions.RestAuthenticationEntryPoint;
-import com.fh.fh.services.CustomUserDetailService;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -14,17 +13,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -32,15 +33,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final RsaKeyProperties keys;
-    private final CustomUserDetailService userDetailService;
     private final RestAccessDeniedHandler accessDeniedHandler;
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
-    public SecurityConfig(RsaKeyProperties keys, CustomUserDetailService userDetailService,
+    public SecurityConfig(RsaKeyProperties keys,
                           RestAccessDeniedHandler accessDeniedHandler,
                           RestAuthenticationEntryPoint authenticationEntryPoint) {
         this.keys = keys;
-        this.userDetailService = userDetailService;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
     }
@@ -51,19 +50,27 @@ public class SecurityConfig {
         return http
                 .csrf().disable()
                 .authorizeRequests(auth -> auth
-                        .antMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated()
+//                        .antMatchers("/auth/**").permitAll()
+                                .anyRequest().authenticated()
                 )
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler)
-                .and()
-//        .authenticationProvider(authenticationProvider())
+//                .authenticationProvider(authenticationProvider())
                 .oauth2ResourceServer(oauth -> oauth
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
                         .jwt())
+                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
+    }
+
+    @Bean
+    public InMemoryUserDetailsManager users() {
+        return new InMemoryUserDetailsManager(
+                User.withUsername("ADMIN")
+                        .password(passwordEncoder().encode("ADMIN"))
+                        .authorities("ROLE_ADMIN")
+                        .build()
+        );
     }
 
     @Bean
@@ -84,13 +91,13 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
+//    @Bean
+//    public AuthenticationProvider authenticationProvider() {
+//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//        authProvider.setUserDetailsService(users());
+//        authProvider.setPasswordEncoder(passwordEncoder());
+//        return authProvider;
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
