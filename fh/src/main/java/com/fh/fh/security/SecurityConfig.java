@@ -11,8 +11,6 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,9 +34,7 @@ public class SecurityConfig {
     private final RestAccessDeniedHandler accessDeniedHandler;
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
-    public SecurityConfig(RsaKeyProperties keys,
-                          RestAccessDeniedHandler accessDeniedHandler,
-                          RestAuthenticationEntryPoint authenticationEntryPoint) {
+    public SecurityConfig(RsaKeyProperties keys, RestAccessDeniedHandler accessDeniedHandler, RestAuthenticationEntryPoint authenticationEntryPoint) {
         this.keys = keys;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
@@ -50,10 +46,10 @@ public class SecurityConfig {
         return http
                 .csrf().disable()
                 .authorizeRequests(auth -> auth
-//                        .antMatchers("/auth/**").permitAll()
-                                .anyRequest().authenticated()
+                        .antMatchers("/auth/*").hasAnyRole("EXT")
+                        .antMatchers("/*").hasAuthority("SCOPE_ROLE_EXT")
+                        .anyRequest().authenticated()
                 )
-//                .authenticationProvider(authenticationProvider())
                 .oauth2ResourceServer(oauth -> oauth
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
@@ -66,9 +62,9 @@ public class SecurityConfig {
     @Bean
     public InMemoryUserDetailsManager users() {
         return new InMemoryUserDetailsManager(
-                User.withUsername("ADMIN")
-                        .password(passwordEncoder().encode("ADMIN"))
-                        .authorities("ROLE_ADMIN")
+                User.withUsername("admin")
+                        .password(passwordEncoder().encode("admin"))
+                        .roles("EXT", "ADMIN")
                         .build()
         );
     }
@@ -84,20 +80,6 @@ public class SecurityConfig {
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-            throws Exception {
-        return configuration.getAuthenticationManager();
-    }
-
-//    @Bean
-//    public AuthenticationProvider authenticationProvider() {
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setUserDetailsService(users());
-//        authProvider.setPasswordEncoder(passwordEncoder());
-//        return authProvider;
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

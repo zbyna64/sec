@@ -1,22 +1,21 @@
 package com.fh.fh.security;
 
-import com.fh.fh.models.User;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
+import com.fh.fh.models.ExpirationResponse;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
+
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TokenService {
@@ -32,30 +31,61 @@ public class TokenService {
 
     public String generateToken(Authentication authentication) {
 
-        Instant now = Instant.now();
-        String scope = Arrays.stream(authentication.getAuthorities().toString().split(","))
+        final Instant now = Instant.now();
+        String scope = authentication.getAuthorities()
+                .stream()
+                .map(Objects::toString)
                 .collect(Collectors.joining(" "));
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("dCOS")
                 .issuedAt(now)
-//        .expiresAt()
+                .expiresAt(now.plus(expiracy, ChronoUnit.HOURS))
                 .subject(authentication.getName())
                 .claim("scope", scope)
                 .build();
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    public String generateToken() {
+    public ExpirationResponse getExpirationTime(String token) throws ParseException {
+        Instant expireAt = tokenExpiration(token);
+        if (expireAt.isBefore(Instant.now())) {
+            return new ExpirationResponse("JWT token is expired");
+        }
+        return new ExpirationResponse(expireAt);
 
-        Instant now = Instant.now();
-        String scope = "ROLE_ADMIN";
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("dCOS")
-                .issuedAt(now)
-                .expiresAt(now.plusSeconds(expiracy))
-                .subject("ADMIN")
-                .claim("scope", scope)
+    }
+
+    public Instant tokenExpiration(String token) throws ParseException {
+        Jwt jwtToken = decode(token);
+        Instant expiresAt = jwtToken.getExpiresAt();
+        return expiresAt;
+    }
+
+    private Jwt decode(String encodedToken) throws ParseException {
+        String parsedToken = getToken(encodedToken);
+        JWT jwt = JWTParser.parse(parsedToken);
+
+        Map<String, Object> headers = new LinkedHashMap<>(jwt.getHeader().toJSONObject());
+        Map<String, Object> claims = new HashMap<>();
+
+        for (String key : jwt.getJWTClaimsSet().getClaims().keySet()) {
+            Object value = jwt.getJWTClaimsSet().getClaims().get(key);
+            if (key.equals("exp") || key.equals("iat")) {
+                value = ((Date) value).toInstant();
+            }
+            claims.put(key, value);
+        }
+        return Jwt.withTokenValue(parsedToken)
+                .headers(h -> h.putAll(headers))
+                .claims(c -> c.putAll(claims))
                 .build();
-        return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
+    private String getToken(String encodedToken) {
+        return Arrays.stream(encodedToken.split(" "))
+                .filter(t -> !t.contains("Bearer"))
+                .map(Objects::toString)
+                .collect(Collectors.toList())
+                .get(0);
     }
 }
