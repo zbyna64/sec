@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 public class TokenService {
 
     private final JwtEncoder encoder;
+    private static final String RESPONSE_EXPIRED = "JWT token is expired";
+
     @Value("${jwt.expirationHours}")
     private int expirationHours;
 
@@ -46,7 +48,7 @@ public class TokenService {
     public ExpirationResponse getExpirationTime(String token) throws ParseException {
         Instant expireAt = tokenExpiration(token);
         if (expireAt.isBefore(Instant.now())) {
-            return new ExpirationResponse("JWT token is expired");
+            return new ExpirationResponse(RESPONSE_EXPIRED);
         }
         return new ExpirationResponse(expireAt);
 
