@@ -41,4 +41,18 @@ public class TokenService {
         .build();
     return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
   }
+
+  public String generateToken() {
+
+    Instant now = Instant.now();
+    String scope = "ROLE_ADMIN";
+    JwtClaimsSet claims = JwtClaimsSet.builder()
+            .issuer("dCOS")
+            .issuedAt(now)
+//        .expiresAt()
+            .subject("ADMIN")
+            .claim("scope", scope)
+            .build();
+    return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+  }
 }

@@ -29,7 +29,7 @@ public class RegisterService {
     if (userRepository.existsByUsername(username)) {
       throw new InvalidParameterException("Username: `" + username + "` already taken");
     }
-    User user = userService.createUserWithDollars(username, password);
+//    User user = userService.createUserWithDollars(username, password);
     return new RegisterSuccessDTO("Success", "Registration completed with username: " + username);
   }
 }

@@ -31,69 +31,70 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-  private final RsaKeyProperties keys;
-  private final CustomUserDetailService userDetailService;
-  private final RestAccessDeniedHandler accessDeniedHandler;
-  private final RestAuthenticationEntryPoint authenticationEntryPoint;
+    private final RsaKeyProperties keys;
+    private final CustomUserDetailService userDetailService;
+    private final RestAccessDeniedHandler accessDeniedHandler;
+    private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
-  public SecurityConfig(RsaKeyProperties keys, CustomUserDetailService userDetailService,
-      RestAccessDeniedHandler accessDeniedHandler,
-      RestAuthenticationEntryPoint authenticationEntryPoint) {
-    this.keys = keys;
-    this.userDetailService = userDetailService;
-    this.accessDeniedHandler = accessDeniedHandler;
-    this.authenticationEntryPoint = authenticationEntryPoint;
-  }
+    public SecurityConfig(RsaKeyProperties keys, CustomUserDetailService userDetailService,
+                          RestAccessDeniedHandler accessDeniedHandler,
+                          RestAuthenticationEntryPoint authenticationEntryPoint) {
+        this.keys = keys;
+        this.userDetailService = userDetailService;
+        this.accessDeniedHandler = accessDeniedHandler;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+    }
 
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-    return http
-        .csrf().disable()
-        .authorizeRequests(auth -> auth
-            .antMatchers("/auth/**").permitAll()
-            .anyRequest().authenticated()
-        )
-        .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
-        .accessDeniedHandler(accessDeniedHandler)
-        .and()
-        .authenticationProvider(authenticationProvider())
-        .oauth2ResourceServer(oauth -> oauth
-            .authenticationEntryPoint(authenticationEntryPoint)
-            .accessDeniedHandler(accessDeniedHandler)
-            .jwt())
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .build();
-  }
+        return http
+                .csrf().disable()
+                .authorizeRequests(auth -> auth
+                        .antMatchers("/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
+                .and()
+//        .authenticationProvider(authenticationProvider())
+                .oauth2ResourceServer(oauth -> oauth
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .jwt())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .build();
+    }
 
-  @Bean
-  public JwtDecoder decoder() {
-    return NimbusJwtDecoder.withPublicKey(keys.publicKey()).build();
-  }
+    @Bean
+    public JwtDecoder decoder() {
+        return NimbusJwtDecoder.withPublicKey(keys.publicKey()).build();
+    }
 
-  @Bean
-  public JwtEncoder encoder() {
-    JWK jwk = new RSAKey.Builder(keys.publicKey()).privateKey(keys.privateKey()).build();
-    JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-    return new NimbusJwtEncoder(jwks);
-  }
+    @Bean
+    public JwtEncoder encoder() {
+        JWK jwk = new RSAKey.Builder(keys.publicKey()).privateKey(keys.privateKey()).build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
 
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-      throws Exception {
-    return configuration.getAuthenticationManager();
-  }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+            throws Exception {
+        return configuration.getAuthenticationManager();
+    }
 
-  @Bean
-  public AuthenticationProvider authenticationProvider() {
-    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-    authProvider.setUserDetailsService(userDetailService);
-    authProvider.setPasswordEncoder(passwordEncoder());
-    return authProvider;
-  }
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 }

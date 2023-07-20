@@ -1,26 +1,16 @@
 package com.fh.fh.controllers;
 
-import com.fh.fh.models.ErrorResponse;
 import com.fh.fh.models.LoginDTO;
 import com.fh.fh.models.LoginSuccesDTO;
 import com.fh.fh.models.RegisterDTO;
 import com.fh.fh.models.RegisterSuccessDTO;
+import com.fh.fh.security.TokenService;
 import com.fh.fh.services.LoginService;
 import com.fh.fh.services.RegisterService;
-import java.security.InvalidParameterException;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,10 +18,12 @@ public class AuthController {
 
   private final LoginService loginService;
   private final RegisterService registerService;
+  private final TokenService tokenService;
 
-  public AuthController(LoginService loginService, RegisterService registerService) {
+  public AuthController(LoginService loginService, RegisterService registerService, TokenService tokenService) {
     this.loginService = loginService;
     this.registerService = registerService;
+    this.tokenService = tokenService;
   }
 
   @PostMapping("/register")
@@ -42,6 +34,12 @@ public class AuthController {
   @PostMapping("/login")
   public ResponseEntity<LoginSuccesDTO> token(@Valid @RequestBody LoginDTO loginDTO) {
     LoginSuccesDTO token = loginService.login(loginDTO);
+    return ResponseEntity.ok().body(token);
+  }
+
+  @GetMapping("/token")
+  public ResponseEntity<String> generateToken() {
+    String token = tokenService.generateToken();
     return ResponseEntity.ok().body(token);
   }
 

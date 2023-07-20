@@ -37,7 +37,7 @@ public class LoginService {
 
     String token = tokenService.generateToken(user);
 
-    LoginSuccesDTO dto = new LoginSuccesDTO(loginUsername, token, user.getDollar().getAmount());
+    LoginSuccesDTO dto = new LoginSuccesDTO(loginUsername, token);
     return dto;
   }
 
