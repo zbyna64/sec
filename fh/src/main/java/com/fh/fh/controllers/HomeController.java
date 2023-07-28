@@ -20,10 +20,10 @@ public class HomeController {
   }
 
 
-  @GetMapping("/user")
+  @GetMapping("/developer")
   @ResponseBody
-  public String user() {
-    return "hello user";
+  public String developer() {
+    return "hello developer";
   }
 
 }

@@ -44,7 +44,8 @@ public class SecurityConfig {
         return http
                 .csrf().disable()
                 .authorizeRequests(auth -> auth
-                        .antMatchers("/*").hasAuthority("SCOPE_ROLE_EXT")
+                        .antMatchers("/admin").hasAuthority("SCOPE_ROLE_EXT")
+                        .antMatchers("/developer").hasAuthority("SCOPE_ROLE_DEVELOPERS")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth -> oauth
