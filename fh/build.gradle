@@ -29,6 +29,10 @@ dependencies {
     testImplementation 'org.junit.vintage:junit-vintage-engine:5.8.2'
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    implementation group: 'org.springframework.security', name: 'spring-security-ldap', version: '6.0.5'
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-ldap', version: '3.1.0'
+    implementation group: 'com.unboundid', name: 'unboundid-ldapsdk', version: '6.0.9'
 }
 
 tasks.named('test') {

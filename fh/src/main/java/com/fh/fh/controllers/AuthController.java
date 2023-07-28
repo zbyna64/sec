@@ -21,8 +21,15 @@ public class AuthController {
 
     private final TokenService tokenService;
 
-    @GetMapping("/token")
+    @GetMapping("/basic/token")
     public ResponseEntity<TokenResponse> token(Authentication authentication) throws ParseException {
+        String token = tokenService.generateToken(authentication);
+        Instant expiresAt = tokenService.tokenExpiration("Bearer " + token);
+        return ResponseEntity.ok().body(new TokenResponse(token, expiresAt));
+    }
+
+    @GetMapping("/ldap/token")
+    public ResponseEntity<TokenResponse> ldapToken(Authentication authentication) throws ParseException {
         String token = tokenService.generateToken(authentication);
         Instant expiresAt = tokenService.tokenExpiration("Bearer " + token);
         return ResponseEntity.ok().body(new TokenResponse(token, expiresAt));
