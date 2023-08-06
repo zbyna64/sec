@@ -8,6 +8,10 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +22,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,18 +45,22 @@ public class SecurityConfig {
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
+    @Order(3)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf().disable()
                 .authorizeRequests(auth -> auth
-                        .antMatchers("/admin").hasAuthority("SCOPE_ROLE_EXT")
-                        .antMatchers("/developer").hasAuthority("SCOPE_ROLE_DEVELOPERS")
-                        .anyRequest().authenticated()
+                                .antMatchers("/admin").hasAuthority("SCOPE_ROLE_EXT")
+                                .antMatchers("/developer").hasAuthority("SCOPE_ROLE_DEVELOPERS")
+                                .antMatchers("/open-api/**").permitAll()
+                                .antMatchers("/swagger-ui/**").permitAll()
+                                .antMatchers("/v3/**").permitAll()
+                                .antMatchers("/auth/token/expiration").authenticated()
+                                .anyRequest().denyAll()
+//                        .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer(oauth -> oauth
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
-                        .jwt())
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).accessDeniedHandler(accessDeniedHandler).and()
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
@@ -64,7 +73,7 @@ public class SecurityConfig {
                 .antMatcher("/auth/ldap/*")
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                                .anyRequest().hasAnyRole("DEVELOPERS")
+                        .anyRequest().hasAnyRole("DEVELOPERS")
                 )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -79,7 +88,7 @@ public class SecurityConfig {
                 .antMatcher("/auth/basic/*")
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                                .anyRequest().hasAnyRole("EXT"))
+                        .anyRequest().hasAnyRole("EXT"))
                 .httpBasic(Customizer.withDefaults())
                 .userDetailsService(users())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
